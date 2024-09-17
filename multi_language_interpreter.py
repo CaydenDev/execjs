@@ -1,27 +1,38 @@
 import sys
 import execjs
+import traceback
 
 class MultiLanguageInterpreter:
     def __init__(self):
+        # Supported languages and their evaluation methods
         self.languages = {
             "python": self.eval_python,
-            "javascript": self.eval_javascript
+            "javascript": self.eval_javascript,
         }
-    
+        self.python_globals = {}
+        self.javascript_context = execjs.compile("""
+            function run() {
+                return result;
+            }
+
+            function setCode(code) {
+                eval(code);
+            }
+        """)
+
     def eval_python(self, code):
         try:
-            exec_globals = {}
-            exec(code, exec_globals)  
-            return exec_globals.get('output', "Python code executed successfully.")
+            exec(code, self.python_globals)
+            return self.python_globals.get('output', "Python code executed successfully.")
         except Exception as e:
-            return f"Python error: {e}"
+            return f"Python error: {traceback.format_exc()}"
 
     def eval_javascript(self, code):
         try:
-            ctx = execjs.compile(code)
-            return ctx.call('run')  
+            self.javascript_context.call('setCode', code)
+            return self.javascript_context.call('run')
         except Exception as e:
-            return f"JavaScript error: {e}"
+            return f"JavaScript error: {str(e)}"
 
     def interpret(self, lang, code):
         if lang in self.languages:
@@ -31,22 +42,29 @@ class MultiLanguageInterpreter:
             print(f"Error: Unsupported language '{lang}'")
 
     def run(self):
-        print("Multi-Language Interpreter")
+        print("Enhanced Multi-Language Interpreter")
         print("Type 'exit' to quit.")
         while True:
             lang = input("Enter language (python/javascript): ").strip().lower()
             if lang == 'exit':
+                print("Exiting the interpreter.")
                 break
-            code = input("Enter your code (finish with a line containing 'END'):\n")
+            if lang not in self.languages:
+                print(f"Error: Unsupported language '{lang}'. Try again.")
+                continue
             
-
-            while True:
-                line = input()
-                if line.strip().upper() == 'END':
-                    break
-                code += "\n" + line
-            
+            code = self.collect_code()
             self.interpret(lang, code)
+
+    def collect_code(self):
+        code = ""
+        print("Enter your code (finish with a line containing 'END'):")
+        while True:
+            line = input()
+            if line.strip().upper() == 'END':
+                break
+            code += line + "\n"
+        return code.strip()
 
 if __name__ == "__main__":
     interpreter = MultiLanguageInterpreter()
