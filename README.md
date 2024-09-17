@@ -8,3 +8,6 @@ A simple multi-language interpreter that allows users to execute code in Python 
 - Simple command-line interface for user interaction.
 - Multi-line input support until the user signals the end of input.
 - Lightweight and easy to use.
+
+## Documentation
+[Documentation](https://slimwiki.com/uxhlscsin/getting-started-0sgg7j8vti/multi-language-interpreter-documentation-ctqhq7ugx-iqb60r0prbgg)
