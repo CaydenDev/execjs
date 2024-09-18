@@ -1,57 +1,45 @@
-# interpreter.py
+import sys
+from Evaluator.python_evaluator import PythonEvaluator
+from Evaluator.javascript_evaluator import JavaScriptEvaluator
+from Evaluator.cpp_evaluator import CppEvaluator
+from Converter.python_to_cpp import PythonToJavaScriptConverter
 
-from evaluators.python_evaluator import PythonEvaluator
-from evaluators.javascript_evaluator import JavaScriptEvaluator
-from converters.python_to_typescript import PythonToTypeScriptConverter
-from converters.javascript_to_python import JavaScriptToPythonConverter
+def main():
+    python_evaluator = PythonEvaluator()
+    javascript_evaluator = JavaScriptEvaluator()
+    cpp_evaluator = CppEvaluator()
 
-class MultiLanguageInterpreter:
-    def __init__(self):
-        self.evaluators = {
-            "python": PythonEvaluator(),
-            "javascript": JavaScriptEvaluator(),
-        }
+    while True:
+        print("Choose an option:")
+        print("1. Evaluate Python Code")
+        print("2. Evaluate JavaScript Code")
+        print("3. Evaluate C++ Code")
+        print("4. Convert Python to JavaScript")
+        print("5. Exit")
+        
+        choice = input("Enter choice (1/2/3/4/5): ")
 
-        self.converters = {
-            "convert_to_typescript": PythonToTypeScriptConverter(),
-            "convert_to_javascript": JavaScriptToPythonConverter(),
-        }
-
-    def interpret(self, lang, code):
-        if lang in self.evaluators:
-            result = self.evaluators[lang].evaluate(code)
-            print(result)
-        elif lang in self.converters:
-            result = self.converters[lang].convert(code)
-            print(result)
+        if choice == '1':
+            code = input("Enter Python code to evaluate:\n")
+            result = python_evaluator.evaluate(code)
+            print("Result:", result)
+        elif choice == '2':
+            code = input("Enter JavaScript code to evaluate:\n")
+            result = javascript_evaluator.evaluate(code)
+            print("Result:", result)
+        elif choice == '3':
+            code = input("Enter C++ code to evaluate:\n")
+            result = cpp_evaluator.evaluate(code)
+            print("Result:", result)
+        elif choice == '4':
+            python_code = input("Enter Python code to convert to JavaScript:\n")
+            js_code = converter.convert(python_code)
+            print("Converted JavaScript code:\n", js_code)
+        elif choice == '5':
+            print("Exiting.")
+            break
         else:
-            print(f"Error: Unsupported language '{lang}'")
-
-    def run(self):
-        print("Enhanced Multi-Language Interpreter")
-        print("Type 'exit' to quit.")
-        while True:
-            lang = input("Enter language (python/javascript/convert_to_typescript/convert_to_javascript): ").strip().lower()
-            if lang == 'exit':
-                print("Exiting the interpreter.")
-                break
-            if lang not in self.evaluators and lang not in self.converters:
-                print(f"Error: Unsupported language '{lang}'. Try again.")
-                continue
-
-            code = self.collect_code()
-            self.interpret(lang, code)
-
-    def collect_code(self):
-        code = ""
-        print("Enter your code (finish with a line containing 'END'):")
-        while True:
-            line = input()
-            if line.strip().upper() == 'END':
-                break
-            code += line + "\n"
-        return code.strip()
+            print("Invalid choice. Please try again.")
 
 if __name__ == "__main__":
-    interpreter = MultiLanguageInterpreter()
-    interpreter.run()
+    main()
